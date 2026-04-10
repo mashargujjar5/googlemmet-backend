@@ -1,8 +1,25 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const mongoose = require('mongoose');
 const userRoutes = require('./routes/user.routes');
 const meetingRoutes = require('./routes/meeting.routes');
+
+// Database Connection for Serverless
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/google-meet";
+const connectDB = async () => {
+  if (mongoose.connection.readyState === 0) {
+    try {
+      await mongoose.connect(MONGODB_URI);
+      console.log('Connected to MongoDB');
+    } catch (err) {
+      console.error('MongoDB connection error:', err);
+    }
+  }
+};
+
+// Initial connection for serverless warming
+connectDB();
 
 const app = express();
 
