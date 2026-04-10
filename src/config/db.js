@@ -1,23 +1,31 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URI = process.env.MONGODB_URINEW;
+// Try to get the URI from multiple possible environment variables
+const MONGODB_URI = process.env.MONGODB_URI ||
+  process.env.MONGODB_URINEW ||
+  process.env.DATABASE_URL ||
+  (process.env.NODE_ENV !== 'production' ? "mongodb://localhost:27017/google-meet" : undefined);
 
-const connectDB = async () => { 
+const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) {
-    console.log('MongoDB already connected');
     return mongoose.connection;
+  }
+
+  if (!MONGODB_URI) {
+    const errorMsg = "CRITICAL ERROR: No MongoDB connection string found in environment variables (tried MONGODB_URI, MONGODB_URINEW, DATABASE_URL). Please set one in Vercel settings.";
+    console.error(errorMsg);
+    throw new Error(errorMsg);
   }
 
   try {
     const conn = await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 10000, // 10 seconds timeout for server selection
-      socketTimeoutMS: 45000, // 45 seconds for socket timeout
+      serverSelectionTimeoutMS: 15000, // 15 seconds
+      socketTimeoutMS: 45000,
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    console.error(`Error connecting to MongoDB: ${error.message}`);
-    // In serverless, we might want to throw the error to be caught by a middleware
+    console.error(`MongoDB Connection Error: ${error.message}`);
     throw error;
   }
 };
