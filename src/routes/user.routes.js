@@ -7,10 +7,14 @@ const fs = require('fs');
 const { register, login, logout, getProfile } = require('../controllers/user.controller');
 const { verifyJWT } = require('../middlewares/auth.middleware');
 
-// Ensure upload directory exists
+// Ensure upload directory exists (with try-catch for Vercel read-only FS)
 const uploadDir = process.env.VERCEL ? '/tmp/uploads' : 'uploads/';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (error) {
+  console.warn('Could not create upload directory:', error.message);
 }
 
 const storage = multer.diskStorage({

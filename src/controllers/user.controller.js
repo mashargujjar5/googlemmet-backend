@@ -50,7 +50,12 @@ exports.login = async (req, res) => {
       data: { user: loggedInUser, accessToken, refreshToken }
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Login Error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || "Internal Server Error during login",
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    });
   }
 };
 
