@@ -45,9 +45,7 @@ if (process.env.NODE_ENV !== 'production') {
       console.error('Failed to connect to DB, server not started:', err.message);
     });
 } else {
-  // On Vercel, app.js handles requests and DB connection via middleware
   console.log('Production environment detected');
 }
 
-// Export for Vercel
 module.exports = server;
