@@ -2,11 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  // Evaluate URI inside the function to ensure process.env is loaded
-  const MONGODB_URI = process.env.MONGODB_URI ||
-    process.env.MONGODB_URINEW ||
-    process.env.DATABASE_URL ||
-    (process.env.NODE_ENV !== 'production' ? "mongodb://localhost:27017/google-meet" : "mongodb+srv://admin:pass@cluster.mongodb.net/test"); // Fallback for safety
+  const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL;
 
   if (mongoose.connection.readyState >= 1) {
     return mongoose.connection;
