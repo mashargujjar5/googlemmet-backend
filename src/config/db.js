@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_URINEW || "mongodb://localhost:27017/google-meet";
+const MONGODB_URI = process.env.MONGODB_URINEW;
 
-const connectDB = async () => {
+const connectDB = async () => { 
   if (mongoose.connection.readyState >= 1) {
     console.log('MongoDB already connected');
     return mongoose.connection;
