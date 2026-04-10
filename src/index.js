@@ -18,13 +18,29 @@ socketHandler(io);
 const PORT = process.env.PORT || 9000;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/google-meet";
 
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-    server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
+// Database Connection
+const connectDB = async () => {
+  try {
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(MONGODB_URI);
+      console.log('Connected to MongoDB');
+    }
+  } catch (err) {
     console.error('MongoDB connection error:', err);
+  }
+};
+
+// Start server for local development
+if (process.env.NODE_ENV !== 'production') {
+  connectDB().then(() => {
+    server.listen(PORT, () => {
+      console.log(`Server running local on port ${PORT}`);
+    });
   });
+} else {
+  // On Vercel, we just need to ensure DB is connected
+  connectDB();
+}
+
+// Export for Vercel
+module.exports = server;
